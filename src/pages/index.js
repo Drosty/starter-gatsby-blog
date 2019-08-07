@@ -3,17 +3,34 @@ import get from 'lodash/get'
 import Helmet from 'react-helmet'
 import Hero from '../components/hero'
 import ArticlePreview from '../components/article-preview'
+import Img from 'gatsby-image'
+const ReactMarkdown = require('react-markdown/with-html')
+
 
 class RootIndex extends React.Component {
   render() {
     const siteTitle = get(this, 'props.data.site.siteMetadata.title')
     const posts = get(this, 'props.data.allContentfulBlogPost.edges')
     const [author] = get(this, 'props.data.allContentfulPerson.edges')
+    const pageData = get(this, 'props.data.allContentfulPage.edges')[0]
+
+    console.dir(pageData.node.firstParagraph.childMarkdownRemark.rawMarkdownBody)
 
     return (
       <div style={{ background: '#fff' }}>
         <Helmet title={siteTitle} />
-        <Hero data={author.node} />
+        <Hero title={pageData.node.title} heroText={pageData.node.heroText} heroImage={pageData.node.heroImage} />
+
+        <div className="wrapper">
+          <ReactMarkdown source={pageData.node.firstParagraph.childMarkdownRemark.rawMarkdownBody} />
+        </div>
+
+        <Img sizes={pageData.node.firstImage.sizes} />
+
+        <div className="wrapper">
+          <ReactMarkdown source={pageData.node.secondParagraph.childMarkdownRemark.rawMarkdownBody} />
+        </div>
+
         <div className="wrapper">
           <h2 className="section-headline">Recent articles</h2>
           <ul className="article-list">
@@ -71,6 +88,35 @@ export const pageQuery = graphql`
               background: "rgb:000000"
             ) {
               ...GatsbyContentfulSizes_withWebp
+            }
+          }
+        }
+      }
+    }
+    allContentfulPage {
+      edges {
+        node {
+          title
+          navText
+          heroText
+          heroImage {
+            sizes(maxWidth: 1200, maxHeight: 410, resizingBehavior: SCALE) {
+              ...GatsbyContentfulSizes_withWebp
+            }
+          }
+          firstImage {
+            sizes(maxWidth: 2500, maxHeight: 1667, resizingBehavior: SCALE) {
+              ...GatsbyContentfulSizes_withWebp
+            }
+          }
+          firstParagraph {
+            childMarkdownRemark {
+              rawMarkdownBody
+            }
+          }
+					secondParagraph {
+            childMarkdownRemark {
+              rawMarkdownBody
             }
           }
         }
