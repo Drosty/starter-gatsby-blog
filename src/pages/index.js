@@ -6,12 +6,10 @@ import ArticlePreview from '../components/article-preview'
 import Img from 'gatsby-image'
 const ReactMarkdown = require('react-markdown/with-html')
 
-
 class RootIndex extends React.Component {
   render() {
     const siteTitle = get(this, 'props.data.site.siteMetadata.title')
     const posts = get(this, 'props.data.allContentfulBlogPost.edges')
-    const [author] = get(this, 'props.data.allContentfulPerson.edges')
     const pageData = get(this, 'props.data.allContentfulPage.edges')[0]
 
     console.dir(pageData.node.firstParagraph.childMarkdownRemark.rawMarkdownBody)
